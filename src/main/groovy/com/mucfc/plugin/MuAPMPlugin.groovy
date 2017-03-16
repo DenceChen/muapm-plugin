@@ -15,7 +15,7 @@ class MuAPMPlugin extends BasePlugin{
         if(project.hasProperty('android')){
             project.android.registerTransform(new MuTransformer(project))
         }else{
-            throw new GradleException("请先加载android的app或library插件");
+            throw new GradleException("请先加载android的app或library插件")
         }
     }
 }

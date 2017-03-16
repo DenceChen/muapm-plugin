@@ -1,6 +1,8 @@
 package com.mucfc.plugin
 
+import com.android.build.api.transform.TransformInput
 import com.android.build.api.transform.TransformInvocation
+import org.gradle.api.logging.Logger
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -9,9 +11,10 @@ import java.util.zip.ZipFile
  * Created by abby on 2017/3/15.
  */
 abstract class Traverser {
-
-    void traverse(TransformInvocation invocation) {
-        invocation.inputs.each { transformInput ->
+    Logger logger
+    void traverse(Collection<TransformInput> inputs, Logger logger) {
+        this.logger = logger
+        inputs.each { transformInput ->
             transformInput.jarInputs.each { jarInput ->
                 ZipFile zip = new ZipFile(jarInput.file)
                 zip.entries().findAll { zipEntry ->
@@ -30,7 +33,7 @@ abstract class Traverser {
     }
 
     void handleZipEntry(ZipFile zip, ZipEntry entry) {
-        InputStream entryStream = zip.getInputStream(entry);
+        InputStream entryStream = zip.getInputStream(entry)
         if (entry.name.toLowerCase().endsWith('.class')) {
             processZipClass(entry, entryStream)
         } else {
@@ -43,7 +46,7 @@ abstract class Traverser {
         if (file.isDirectory()) {
             processDir(baseDir, file)
         } else {
-            InputStream fileStream = file.newInputStream();
+            InputStream fileStream = file.newInputStream()
             processFile(baseDir, file, fileStream)
             fileStream.close()
         }
